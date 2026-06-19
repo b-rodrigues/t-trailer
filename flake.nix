@@ -2,7 +2,7 @@
   description = "t-trailer — Intro video for T Orchestration Engine";
 
   inputs = {
-    nixpkgs.url = "github:rstats-on-nix/nixpkgs";
+    nixpkgs.url = "github:rstats-on-nix/nixpkgs/2026-05-08";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
