@@ -1,4 +1,4 @@
-import {makeProject} from '@motion-canvas/core';
+import { makeProject } from '@motion-canvas/core';
 import intro from './scenes/intro?scene';
 import pipelinesData from './scenes/pipelines-data?scene';
 import pipelinesQuery from './scenes/pipelines-query?scene';
@@ -9,5 +9,14 @@ import errorsExplain from './scenes/errors-explain?scene';
 import dataManip from './scenes/data-manip?scene';
 
 export default makeProject({
-  scenes: [intro, pipelinesData, pipelinesQuery, pipelinesErrors, pipelinesDebug, pipelinesCompose, errorsExplain, dataManip],
+  scenes: [
+    intro,
+    pipelinesData,
+    pipelinesQuery,
+    pipelinesErrors,
+    errorsExplain,
+    pipelinesDebug,
+    pipelinesCompose,
+    dataManip,
+  ],
 });

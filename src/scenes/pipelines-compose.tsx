@@ -196,7 +196,7 @@ export default makeScene2D(function* (view) {
   view.add(
     <Line
       ref={p2Arrow}
-      points={[{x: p2BaseX - 65, y: -70}, {x: p2BaseX + 65, y: -70}]}
+      points={[{x: 140, y: -70}, {x: 170, y: -70}]}
       stroke={SLATE}
       lineWidth={2}
       endArrow={true}
@@ -213,11 +213,11 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={metaLabel}
       text='meta = pipeline_of { etl = p_etl, stats = p_stats }'
-      fontSize={15}
+      fontSize={18}
       fill={INDIGO}
       fontFamily="monospace"
       opacity={0}
-      y={-200}
+      y={-140}
     />,
   );
 
@@ -291,10 +291,18 @@ export default makeScene2D(function* (view) {
   for (let e = 0; e < metaEdges.length; e++) {
     const f = metaNodes[metaEdges[e].from];
     const t = metaNodes[metaEdges[e].to];
-    const fx = f.x + 55;
-    const fy = f.y;
-    const tx = t.x - 55;
-    const ty = t.y;
+    let fx = f.x + 55;
+    let fy = f.y;
+    let tx = t.x - 55;
+    let ty = t.y;
+
+    if (metaEdges[e].from === 2 && metaEdges[e].to === 3) {
+      fx = f.x;
+      fy = f.y + 18;
+      tx = t.x;
+      ty = t.y - 18;
+    }
+
     const midX = (fx + tx) / 2;
     const midY = (fy + ty) / 2;
 
@@ -317,11 +325,11 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={subLabel1}
       text="etl ▸"
-      fontSize={11}
+      fontSize={14}
       fill={SLATE}
       fontFamily="monospace"
       opacity={0}
-      x={-260}
+      x={-295}
       y={-70}
     />,
   );
@@ -331,11 +339,11 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={subLabel2}
       text="stats ▸"
-      fontSize={11}
+      fontSize={14}
       fill={SLATE}
       fontFamily="monospace"
       opacity={0}
-      x={20}
+      x={-20}
       y={40}
     />,
   );
