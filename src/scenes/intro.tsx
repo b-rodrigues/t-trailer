@@ -1,5 +1,5 @@
-import {makeScene2D} from '@motion-canvas/2d';
-import {Txt, Rect, Layout, Circle, Line} from '@motion-canvas/2d';
+import { makeScene2D } from '@motion-canvas/2d';
+import { Txt, Rect, Layout, Circle, Line } from '@motion-canvas/2d';
 import {
   createRef,
   all,
@@ -19,6 +19,7 @@ const R_COLOR = '#276DC3';
 const PY_COLOR = '#FFD43B';
 const JL_COLOR = '#389826';
 const SH_COLOR = '#4EAA25';
+const Q_COLOR = '#6B5B9E';
 
 function* fadeIn(
   node: any,
@@ -33,6 +34,7 @@ function* fadeIn(
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
+  view.scale(1.8);
 
   // ─── Phase 1: Logo & Tagline ────────────────────────────
   const logo = createRef<Txt>();
@@ -101,7 +103,7 @@ export default makeScene2D(function* (view) {
   // ─── Phase 2: Pipeline Visualization ─────────────────────
   // Move title to top
   yield* all(
-    logo().y(-280, 0.6, easeInOutCubic),
+    logo().y(-240, 0.6, easeInOutCubic),
     logo().fontSize(60, 0.6, easeInOutCubic),
     logo().shadowBlur(0, 0.6, easeInOutCubic),
     tagline().opacity(0, 0.4, easeInOutCubic),
@@ -124,10 +126,11 @@ export default makeScene2D(function* (view) {
   yield* pipelineLabel().opacity(1, 0.5);
 
   const langNodes = [
-    {name: 'R', color: R_COLOR},
-    {name: 'Python', color: PY_COLOR},
-    {name: 'Julia', color: JL_COLOR},
-    {name: 'Shell', color: SH_COLOR},
+    { name: 'R', color: R_COLOR },
+    { name: 'Python', color: PY_COLOR },
+    { name: 'Julia', color: JL_COLOR },
+    { name: 'Shell', color: SH_COLOR },
+    { name: 'Quarto', color: Q_COLOR },
   ];
 
   const boxRefs = langNodes.map(() => createRef<Rect>());
@@ -150,6 +153,9 @@ export default makeScene2D(function* (view) {
           shadowBlur={15}
           shadowOffsetY={0}
           shadowOffsetX={0}
+          layout
+          justifyContent="center"
+          alignItems="center"
         >
           <Txt
             ref={labelRefs[i]}
@@ -162,15 +168,15 @@ export default makeScene2D(function* (view) {
         </Rect>,
         ...(i < langNodes.length - 1
           ? [
-              <Txt
-                ref={arrowRefs[i]}
-                text="→"
-                fontSize={28}
-                fill={SLATE}
-                fontFamily="monospace"
-                opacity={0}
-              />,
-            ]
+            <Txt
+              ref={arrowRefs[i]}
+              text="→"
+              fontSize={28}
+              fill={SLATE}
+              fontFamily="monospace"
+              opacity={0}
+            />,
+          ]
           : []),
       ])}
     </Layout>
@@ -190,84 +196,30 @@ export default makeScene2D(function* (view) {
       );
     }
   }
-  yield* waitFor(0.8);
 
-  // ─── Phase 3: Feature highlights ─────────────────────────
-  // Fade out pipeline
+  // Fade in catchy summary sentence below the pipeline
+  const catchySummary = createRef<Txt>();
+  view.add(
+    <Txt
+      ref={catchySummary}
+      text="T provides the seamless glue between nodes, making pipeline manipulation effortless."
+      fontSize={18}
+      fill={SLATE}
+      fontFamily="sans-serif"
+      opacity={0}
+      y={70}
+    />,
+  );
+  yield* catchySummary().opacity(1, 0.6, easeInOutCubic);
+  yield* waitFor(2.0);
+
+  // ─── Phase 3: Website ────────────────────────────────────
+  // Fade out pipeline and summary
   yield* all(
     pipelineLabel().opacity(0, 0.4),
     ...boxRefs.map(r => r().opacity(0, 0.4)),
     ...arrowRefs.map(r => r().opacity(0, 0.4)),
-  );
-
-  const features = [
-    {icon: '▸', text: 'Reproducibility-First', desc: 'Built into the language'},
-    {icon: '▸', text: 'Nix-Powered', desc: 'Hermetic by design'},
-    {icon: '▸', text: 'Errors as Values', desc: 'No silent failures'},
-    {icon: '▸', text: 'AI-Native', desc: 'LLM-friendly by construction'},
-    {icon: '▸', text: 'Mandatory Pipelines', desc: 'Always a DAG'},
-  ];
-
-  const featureRefs = features.map(() => ({
-    icon: createRef<Txt>(),
-    text: createRef<Txt>(),
-    desc: createRef<Txt>(),
-  }));
-
-  const featureLayout = (
-    <Layout layout direction="column" alignItems="start" gap={16} y={40} x={-60}>
-      {features.map((f, i) => (
-        <Layout layout direction="row" alignItems="center" gap={12} opacity={0} y={20}>
-          <Txt ref={featureRefs[i].icon} text={f.icon} fontSize={20} fill={INDIGO} fontFamily="monospace" />
-          <Layout layout direction="column" gap={2}>
-            <Txt ref={featureRefs[i].text} text={f.text} fontSize={22} fontWeight={600} fill="#e2e8f0" fontFamily="sans-serif" />
-            <Txt ref={featureRefs[i].desc} text={f.desc} fontSize={14} fill={SLATE} fontFamily="sans-serif" />
-          </Layout>
-        </Layout>
-      ))}
-    </Layout>
-  );
-
-  view.add(featureLayout);
-
-  const featHeader = createRef<Txt>();
-  view.add(
-    <Txt
-      ref={featHeader}
-      text="Why T?"
-      fontSize={28}
-      fontWeight={700}
-      fill="#e2e8f0"
-      fontFamily="sans-serif"
-      opacity={0}
-      y={-140}
-      x={-60}
-    />,
-  );
-  yield* featHeader().opacity(1, 0.5);
-
-  for (let i = 0; i < features.length; i++) {
-    yield* waitFor(0.15);
-    yield* all(
-      featureRefs[i].icon().opacity(1, 0.4),
-      featureRefs[i].text().opacity(1, 0.4),
-      featureRefs[i].desc().opacity(1, 0.4),
-      featureRefs[i].icon().y(0, 0.4, easeInOutCubic),
-      featureRefs[i].text().y(0, 0.4, easeInOutCubic),
-      featureRefs[i].desc().y(0, 0.4, easeInOutCubic),
-    );
-  }
-
-  yield* waitFor(1.2);
-
-  // ─── Phase 4: Website ────────────────────────────────────
-  yield* all(
-    featHeader().opacity(0, 0.4),
-    ...featureRefs.flatMap(r => [
-      r.icon().opacity(0, 0.4),
-      r.text().opacity(0, 0.4),
-      r.desc().opacity(0, 0.4),
-    ]),
+    catchySummary().opacity(0, 0.4),
   );
 
   const website = createRef<Txt>();

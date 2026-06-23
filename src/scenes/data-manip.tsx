@@ -21,6 +21,7 @@ const SUCCESS_GREEN = '#22c55e';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
+  view.scale(1.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -137,7 +138,6 @@ export default makeScene2D(function* (view) {
           ref={cellRefs[i][j]}
           width={colW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={gridX + j * colW}
           y={-105 + (i + 1) * rowH}
@@ -298,7 +298,6 @@ export default makeScene2D(function* (view) {
           ref={wCellRefs[i][j]}
           width={colW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={gridX + j * colW}
           y={-100 + (i + 1) * rowH}
@@ -384,7 +383,6 @@ export default makeScene2D(function* (view) {
           ref={lCellRefs[i][j]}
           width={colW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={longGridX + j * colW}
           y={-100 + (i + 1) * rowH}
@@ -473,7 +471,6 @@ export default makeScene2D(function* (view) {
           ref={xCellRefs[i][j]}
           width={jColW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={-200 + j * jColW}
           y={-120 + (i + 1) * rowH}
@@ -532,7 +529,6 @@ export default makeScene2D(function* (view) {
           ref={yCellRefs[i][j]}
           width={jColW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={-50 + j * jColW}
           y={-120 + (i + 1) * rowH}
@@ -612,7 +608,6 @@ export default makeScene2D(function* (view) {
           ref={rCellRefs[i][j]}
           width={jColW - 3}
           height={rowH - 2}
-          fill="transparent"
           opacity={0}
           x={rGridX + j * jColW}
           y={-120 + (i + 1) * rowH}
@@ -826,7 +821,6 @@ export default makeScene2D(function* (view) {
           ref={newCell[i][j]}
           width={newColW - 2}
           height={18}
-          fill="transparent"
           opacity={0}
           x={newGridX + j * newColW}
           y={185 + (i + 1) * 20}

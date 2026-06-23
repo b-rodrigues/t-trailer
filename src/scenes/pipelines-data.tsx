@@ -1,5 +1,5 @@
-import {makeScene2D} from '@motion-canvas/2d';
-import {Txt, Rect, Layout, Line} from '@motion-canvas/2d';
+import { makeScene2D } from '@motion-canvas/2d';
+import { Txt, Rect, Layout, Line } from '@motion-canvas/2d';
 import {
   createRef,
   all,
@@ -22,6 +22,7 @@ const Q_COLOR = '#6B5B9E';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
+  view.scale(1.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -55,338 +56,125 @@ export default makeScene2D(function* (view) {
   yield* waitFor(0.6);
 
   // ─── Phase 2: Code block ───────────────────────
-  const codeLines = [
-    {text: 'p = pipeline {',               color: '#c792ea'},
-    {text: '  raw  = node(command = read_csv("data.csv"), runtime = T)', color: '#e2e8f0'},
-    {text: '  tidy = raw |> filter($age > 18) |> mutate($z = $x + $y)', color: '#e2e8f0'},
-    {text: '  mod  = rn(script = "model.R", serializer = ^pmml)',       color: R_COLOR},
-    {text: '  plot = qn(script = "plot.qmd")',                          color: Q_COLOR},
-    {text: '}',                               color: '#c792ea'},
+  const codeRefs = [
+    createRef<Txt>(),
+    createRef<Txt>(),
+    createRef<Txt>(),
+    createRef<Txt>(),
+    createRef<Layout>(),
+    createRef<Txt>(),
+    createRef<Txt>(),
   ];
 
-  const codeRefs = codeLines.map(() => createRef<Txt>());
+  const codeRawName = createRef<Txt>();
+  const codeRawDep = createRef<Txt>();
+  const codeTidyName = createRef<Txt>();
+  const codeTidyDep = createRef<Txt>();
+  const quartoComment = createRef<Txt>();
+  const replLabel = createRef<Txt>();
+
   view.add(
     <Layout layout direction="column" alignItems="start" gap={6} y={-60} x={-160}>
-      {codeLines.map((line, i) => (
-        <Txt
-          ref={codeRefs[i]}
-          text={line.text}
-          fontSize={15}
-          fill={line.color}
-          fontFamily="monospace"
-          opacity={0}
-          y={10}
-        />
-      ))}
-    </Layout>,
+      {/* Line 0 */}
+      <Txt ref={codeRefs[0]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>p = pipeline {"{"}</Txt>
+      {/* Line 1 */}
+      <Txt ref={codeRefs[1]} fontSize={15} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeRawName} fill="#e2e8f0" fontSize={15} fontWeight={400}>  raw </Txt>{"  = node(command = read_csv(\"data.csv\"), runtime = T)"}</Txt>
+      {/* Line 2 */}
+      <Txt ref={codeRefs[2]} fontSize={15} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeTidyName} fill="#e2e8f0" fontSize={15} fontWeight={400}>  tidy</Txt>{" = "}<Txt ref={codeRawDep} fill="#e2e8f0" fontSize={15} fontWeight={400}>raw</Txt>{" |> filter($age > 18) |> mutate($z = $x + $y)"}</Txt>
+      {/* Line 3 */}
+      <Txt ref={codeRefs[3]} fontSize={15} fill={R_COLOR} fontFamily="monospace" opacity={0} y={10}>{"  "}{"  mod  = rn(command = <{ lm(z ~ age, data = "}<Txt ref={codeTidyDep} fill={R_COLOR} fontSize={15} fontWeight={400}>tidy</Txt>{") }>, serializer = ^pmml)"}</Txt>
+      {/* Line 4 */}
+      <Layout ref={codeRefs[4]} layout direction="row" gap={12} opacity={0} y={10}>
+        <Txt text="  plot = qn(script = &quot;report.qmd&quot;)" fontSize={15} fill={Q_COLOR} fontFamily="monospace" />
+        <Txt ref={quartoComment} text="-- model is referenced in report.qmd" fontSize={15} fill="#60a5fa" fontFamily="monospace" opacity={0} y={10} />
+      </Layout>
+      {/* Line 5 */}
+      <Txt ref={codeRefs[5]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>{"}"}</Txt>
+      {/* Line 6 */}
+      <Txt ref={codeRefs[6]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>build_pipeline(p)</Txt>
+    </Layout>
   );
 
-  for (const ref of codeRefs) {
-    yield* all(
-      ref().opacity(1, 0.25),
-      ref().y(0, 0.25, easeInOutCubic),
-    );
-  }
-  yield* waitFor(1.2);
-
-  // ─── Phase 3: pipeline_to_frame → table ─────────
-  const invokeLabel = createRef<Txt>();
   view.add(
     <Txt
-      ref={invokeLabel}
-      text="pipeline_to_frame(p)"
-      fontSize={16}
-      fill={INDIGO}
-      fontFamily="monospace"
+      ref={replLabel}
+      text="In the T REPL call t_make() to actually build the pipeline"
+      fontSize={18}
+      fill="#e2e8f0"
+      fontFamily="sans-serif"
       opacity={0}
-      y={-200}
-    />,
+      y={120}
+    />
   );
 
-  yield* all(
-    ...codeRefs.map(r => r().opacity(0, 0.3)),
-    invokeLabel().opacity(1, 0.4),
-  );
-
-  // Build table
-  const colW = 110;
-  const rowH = 32;
-  const headers = ['name', 'runtime', 'serializer', 'deps'];
-  const rows = [
-    ['raw',  'T',   'default',  '—'],
-    ['tidy', 'T',   'default',  'raw'],
-    ['mod',  'R',   'pmml',     'tidy'],
-    ['plot', 'Quarto', 'default', 'raw'],
-  ];
-
-  const tableX = -colW * 1.5;
-  const headerY = -100;
-
-  const headerRefs = headers.map(() => createRef<Rect>());
-  const headerLabelRefs = headers.map(() => createRef<Txt>());
-  const cellRefs = rows.map(() =>
-    headers.map(() => createRef<Rect>()),
-  );
-  const cellLabelRefs = rows.map(() =>
-    headers.map(() => createRef<Txt>()),
-  );
-  const rowBgRefs = rows.map(() => createRef<Rect>());
-
-  for (let j = 0; j < headers.length; j++) {
-    view.add(
-      <Rect
-        ref={headerRefs[j]}
-        width={colW - 2}
-        height={rowH}
-        fill={INDIGO}
-        opacity={0}
-        radius={4}
-        x={tableX + j * colW}
-        y={headerY}
-      >
-        <Txt
-          ref={headerLabelRefs[j]}
-          text={headers[j]}
-          fontSize={14}
-          fontWeight={700}
-          fill="#ffffff"
-          fontFamily="monospace"
-        />
-      </Rect>,
-    );
+  for (let i = 0; i < 6; i++) {
     yield* all(
-      headerRefs[j]().opacity(0.9, 0.2),
-      headerRefs[j]().scale(1, 0.2, easeOutBack),
+      codeRefs[i]().opacity(1, 0.25),
+      codeRefs[i]().y(0, 0.25, easeInOutCubic),
     );
-  }
-
-  for (let i = 0; i < rows.length; i++) {
-    yield* waitFor(0.1);
-    // Row background
-    const bgColor = i % 2 === 0 ? '#1a1a2e' : '#16162a';
-    view.add(
-      <Rect
-        ref={rowBgRefs[i]}
-        width={colW * headers.length}
-        height={rowH}
-        fill={bgColor}
-        opacity={0}
-        radius={4}
-        x={tableX + (colW * (headers.length - 1)) / 2}
-        y={headerY + (i + 1) * rowH}
-      />,
-    );
-    yield* rowBgRefs[i]().opacity(0.5, 0.15);
-
-    for (let j = 0; j < headers.length; j++) {
-      const cellRef = cellRefs[i][j];
-      const labelRef = cellLabelRefs[i][j];
-      view.add(
-        <Rect
-          ref={cellRef}
-          width={colW - 2}
-          height={rowH - 2}
-          fill="transparent"
-          opacity={0}
-          x={tableX + j * colW}
-          y={headerY + (i + 1) * rowH}
-        >
-          <Txt
-            ref={labelRef}
-            text={rows[i][j]}
-            fontSize={13}
-            fill="#e2e8f0"
-            fontFamily="monospace"
-          />
-        </Rect>,
-      );
-      yield* all(
-        cellRef().opacity(1, 0.15),
-      );
-    }
   }
   yield* waitFor(0.8);
 
-  // ─── Phase 4: filter_node ──────────────────────
-  const filterLabel = createRef<Txt>();
-  view.add(
-    <Txt
-      ref={filterLabel}
-      text='filter_node(p, $runtime == "R")'
-      fontSize={15}
-      fill={INDIGO}
-      fontFamily="monospace"
-      opacity={0}
-      y={-200}
-    />,
-  );
-
+  // Pulse raw name and dep in green
+  codeRawName().fontWeight(800);
+  codeRawDep().fontWeight(800);
   yield* all(
-    invokeLabel().opacity(0, 0.3),
-    filterLabel().opacity(1, 0.4),
-  );
-
-  // Gray out non-R rows
-  yield* all(
-    // row 0 (raw — T): dim
-    all(...cellRefs[0].map(c => c().opacity(0.2, 0.4))),
-    // row 1 (tidy — T): dim
-    all(...cellRefs[1].map(c => c().opacity(0.2, 0.4))),
-    // row 2 (mod — R): highlight
-    rowBgRefs[2]().fill('#1a3a2e', 0.4),
-    ...cellRefs[2].map(c => c().opacity(1, 0.4)),
-    // row 3 (plot — Quarto): dim
-    all(...cellRefs[3].map(c => c().opacity(0.2, 0.4))),
-  );
-
-  yield* waitFor(0.6);
-
-  // ─── Phase 5: Mermaid DAG ──────────────────────
-  yield* all(
-    filterLabel().opacity(0, 0.3),
-    ...headerRefs.map(r => r().opacity(0, 0.3)),
-    ...cellRefs.flat().map(r => r().opacity(0, 0.3)),
-    ...rowBgRefs.map(r => r().opacity(0, 0.3)),
-  );
-
-  const dagLabel = createRef<Txt>();
-  view.add(
-    <Txt
-      ref={dagLabel}
-      text="pipeline_to_mermaid(p)"
-      fontSize={16}
-      fill={INDIGO}
-      fontFamily="monospace"
-      opacity={0}
-      y={-200}
-    />,
-  );
-  yield* dagLabel().opacity(1, 0.4);
-
-  // Draw DAG nodes
-  const dagNodes = [
-    {name: 'raw',  color: '#6366f1', x: -200, y: -40},
-    {name: 'tidy', color: '#6366f1', x: 0,    y: -40},
-    {name: 'mod',  color: R_COLOR,   x: 0,    y: 70},
-    {name: 'plot', color: Q_COLOR,   x: 200,  y: -40},
-  ];
-
-  const nodeBoxRefs = dagNodes.map(() => createRef<Rect>());
-  const nodeLabelRefs = dagNodes.map(() => createRef<Txt>());
-
-  for (let i = 0; i < dagNodes.length; i++) {
-    const n = dagNodes[i];
-    view.add(
-      <Rect
-        ref={nodeBoxRefs[i]}
-        width={90}
-        height={40}
-        fill={n.color}
-        radius={6}
-        opacity={0}
-        y={20}
-        shadowColor={n.color}
-        shadowBlur={12}
-        shadowOffsetY={0}
-        shadowOffsetX={0}
-      >
-        <Txt
-          ref={nodeLabelRefs[i]}
-          text={n.name}
-          fontSize={18}
-          fontWeight={700}
-          fill="#ffffff"
-          fontFamily="monospace"
-        />
-      </Rect>,
-    );
-    nodeBoxRefs[i]().x(n.x);
-    nodeLabelRefs[i]().x(n.x);
-    yield* all(
-      nodeBoxRefs[i]().opacity(1, 0.4),
-      nodeBoxRefs[i]().y(0, 0.4, easeOutBack),
-    );
-  }
-
-  // Draw arrows between nodes (raw → tidy, raw → plot, tidy → mod)
-  const edges = [
-    {from: 0, to: 1},
-    {from: 0, to: 3},
-    {from: 1, to: 2},
-  ];
-
-  const arrowRefs = edges.map(() => createRef<Line>());
-
-  for (let e = 0; e < edges.length; e++) {
-    const f = dagNodes[edges[e].from];
-    const t = dagNodes[edges[e].to];
-    const fx = f.x + 45;
-    const fy = 0;
-    const tx = t.x - 45;
-    const ty = 0;
-
-    view.add(
-      <Line
-        ref={arrowRefs[e]}
-        points={[
-          {x: fx, y: fy},
-          {x: (fx + tx) / 2, y: (fy + ty) / 2},
-          {x: tx, y: ty},
-        ]}
-        stroke={SLATE}
-        lineWidth={2}
-        endArrow={true}
-        opacity={0}
-      />,
-    );
-    yield* arrowRefs[e]().opacity(0.6, 0.3);
-  }
-
-  yield* waitFor(1.2);
-
-  // ─── Phase 6: Closing tagline ──────────────────
-  yield* all(
-    dagLabel().opacity(0, 0.3),
-    ...nodeBoxRefs.map(r => r().opacity(0, 0.3)),
-    ...nodeLabelRefs.map(r => r().opacity(0, 0.3)),
-    ...arrowRefs.map(r => r().opacity(0, 0.3)),
-  );
-
-  const tagline = createRef<Txt>();
-  view.add(
-    <Txt
-      ref={tagline}
-      text="Pipelines are first-class values"
-      fontSize={28}
-      fontWeight={700}
-      fill="#e2e8f0"
-      fontFamily="monospace"
-      opacity={0}
-      y={-20}
-    />,
-  );
-
-  const taglineSub = createRef<Txt>();
-  view.add(
-    <Txt
-      ref={taglineSub}
-      text="Inspect them. Filter them. Visualize them."
-      fontSize={16}
-      fill={SLATE}
-      fontFamily="sans-serif"
-      opacity={0}
-      y={20}
-    />,
-  );
-
-  yield* all(
-    tagline().opacity(1, 0.6, easeInOutCubic),
-    tagline().y(0, 0.6, easeInOutCubic),
+    codeRawName().fontSize(22, 0.25, easeOutBack),
+    codeRawName().fill('#22c55e', 0.25),
+    codeRawDep().fontSize(22, 0.25, easeOutBack),
+    codeRawDep().fill('#22c55e', 0.25),
   );
   yield* all(
-    taglineSub().opacity(1, 0.5, easeInOutCubic),
-    taglineSub().y(30, 0.5, easeInOutCubic),
+    codeRawName().fontSize(15, 0.25, easeInOutCubic),
+    codeRawDep().fontSize(15, 0.25, easeInOutCubic),
   );
+  yield* waitFor(0.8);
 
-  yield* waitFor(1.5);
+  // Pulse tidy name and dep in red
+  codeTidyName().fontWeight(800);
+  codeTidyDep().fontWeight(800);
+  yield* all(
+    codeTidyName().fontSize(22, 0.25, easeOutBack),
+    codeTidyName().fill('#ef4444', 0.25),
+    codeTidyDep().fontSize(22, 0.25, easeOutBack),
+    codeTidyDep().fill('#ef4444', 0.25),
+  );
+  yield* all(
+    codeTidyName().fontSize(15, 0.25, easeInOutCubic),
+    codeTidyDep().fontSize(15, 0.25, easeInOutCubic),
+  );
+  yield* waitFor(0.8);
+
+  // Animate comment appearing after tidy highlight, and pulse it
+  yield* all(
+    quartoComment().opacity(1, 0.4, easeInOutCubic),
+    quartoComment().y(0, 0.4, easeInOutCubic),
+  );
+  yield* quartoComment().fontSize(22, 0.25, easeOutBack);
+  yield* quartoComment().fontSize(15, 0.25, easeInOutCubic);
+  yield* waitFor(0.8);
+
+  // Now show build_pipeline(p) line
+  yield* all(
+    codeRefs[6]().opacity(1, 0.25),
+    codeRefs[6]().y(0, 0.25, easeInOutCubic),
+  );
+  yield* waitFor(0.5);
+
+  // Animate build_pipeline REPL label below, without pulsing
+  yield* all(
+    replLabel().opacity(1, 0.5, easeInOutCubic),
+    replLabel().y(100, 0.5, easeInOutCubic),
+  );
+  yield* waitFor(2.0);
+
+  // ─── Outro ──────────────────────────────────────
+  yield* all(
+    title().opacity(0, 0.3),
+    subtitle().opacity(0, 0.3),
+    ...codeRefs.map(r => r().opacity(0, 0.3)),
+    quartoComment().opacity(0, 0.3),
+    replLabel().opacity(0, 0.3),
+  );
+  yield* waitFor(0.5);
 });

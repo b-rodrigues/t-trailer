@@ -20,6 +20,7 @@ const WARN_AMBER = '#f59e0b';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
+  view.scale(1.8);
 
   // ─── Phase 1: Pipeline fails ───────────────────
   const title = createRef<Txt>();
@@ -215,7 +216,6 @@ export default makeScene2D(function* (view) {
           ref={ecRefs[i][j]}
           width={ecW - 3}
           height={eRowH - 2}
-          fill="transparent"
           opacity={0}
           x={egX + j * ecW}
           y={-120 + (i + 1) * eRowH}

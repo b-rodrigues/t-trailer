@@ -19,6 +19,7 @@ const PY_COLOR = '#FFD43B';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
+  view.scale(1.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
