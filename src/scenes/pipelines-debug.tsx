@@ -15,7 +15,7 @@ const INDIGO = '#6366f1';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
-  view.scale(1.8);
+  view.scale(3.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -91,14 +91,14 @@ export default makeScene2D(function* (view) {
             <Layout ref={lineRefs[idx]} layout direction="row" gap={6} key={`line-${idx}`}>
               <Txt
                 text={line.prompt}
-                fontSize={12}
+                fontSize={15}
                 fill={line.prompt === 'T>' ? PINK_COLOR : INDIGO}
                 fontFamily="monospace"
                 opacity={0}
               />
               <Txt
                 text={line.text}
-                fontSize={12}
+                fontSize={15}
                 fill={line.color}
                 fontFamily="monospace"
                 fontWeight={700}
@@ -112,7 +112,7 @@ export default makeScene2D(function* (view) {
             <Txt
               ref={lineRefs[idx]}
               key={`line-${idx}`}
-              fontSize={12}
+              fontSize={15}
               fill={SLATE}
               fontFamily="monospace"
               opacity={0}
@@ -127,7 +127,7 @@ export default makeScene2D(function* (view) {
             ref={lineRefs[idx]}
             key={`line-${idx}`}
             text={line.text}
-            fontSize={12}
+            fontSize={15}
             fill={line.color}
             fontFamily="monospace"
             opacity={0}
@@ -150,7 +150,7 @@ export default makeScene2D(function* (view) {
     >
       <Txt
         ref={expRefs[0]}
-        fontSize={14}
+        fontSize={18}
         fill="#e2e8f0"
         fontFamily="sans-serif"
         opacity={0}
@@ -160,17 +160,17 @@ export default makeScene2D(function* (view) {
 
       <Txt
         ref={expRefs[1]}
-        fontSize={14}
+        fontSize={18}
         fill="#e2e8f0"
         fontFamily="sans-serif"
         opacity={0}
       >
-        Companion <Txt fill={INDIGO} fontWeight={700}>tlang</Txt> packages load upstream dependency artifacts automatically.
+        Companion <Txt fill={INDIGO} fontWeight={700}>tlang</Txt> packages load upstream dependency artifacts.
       </Txt>
 
       <Txt
         ref={expRefs[2]}
-        fontSize={14}
+        fontSize={18}
         fill="#e2e8f0"
         fontFamily="sans-serif"
         opacity={0}
@@ -185,7 +185,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={summaryLabel}
       text="Interactive, language-aware debugging directly from the pipeline"
-      fontSize={18}
+      fontSize={22}
       fill="#e2e8f0"
       fontFamily="sans-serif"
       opacity={0}

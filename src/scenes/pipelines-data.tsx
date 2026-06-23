@@ -22,7 +22,7 @@ const Q_COLOR = '#6B5B9E';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
-  view.scale(1.8);
+  view.scale(3.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -74,24 +74,24 @@ export default makeScene2D(function* (view) {
   const replLabel = createRef<Txt>();
 
   view.add(
-    <Layout layout direction="column" alignItems="start" gap={6} y={-60} x={-160}>
+    <Layout layout direction="column" alignItems="start" gap={6} y={-60} x={0}>
       {/* Line 0 */}
-      <Txt ref={codeRefs[0]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>p = pipeline {"{"}</Txt>
+      <Txt ref={codeRefs[0]} fontSize={18} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>p = pipeline {"{"}</Txt>
       {/* Line 1 */}
-      <Txt ref={codeRefs[1]} fontSize={15} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeRawName} fill="#e2e8f0" fontSize={15} fontWeight={400}>  raw </Txt>{"  = node(command = read_csv(\"data.csv\"), runtime = T)"}</Txt>
+      <Txt ref={codeRefs[1]} fontSize={18} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeRawName} fill="#e2e8f0" fontSize={18} fontWeight={400}>  raw </Txt>{"  = node(command = read_csv(\"data.csv\"), runtime = T)"}</Txt>
       {/* Line 2 */}
-      <Txt ref={codeRefs[2]} fontSize={15} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeTidyName} fill="#e2e8f0" fontSize={15} fontWeight={400}>  tidy</Txt>{" = "}<Txt ref={codeRawDep} fill="#e2e8f0" fontSize={15} fontWeight={400}>raw</Txt>{" |> filter($age > 18) |> mutate($z = $x + $y)"}</Txt>
+      <Txt ref={codeRefs[2]} fontSize={18} fill="#e2e8f0" fontFamily="monospace" opacity={0} y={10}>{"  "}<Txt ref={codeTidyName} fill="#e2e8f0" fontSize={18} fontWeight={400}>  tidy</Txt>{" = "}<Txt ref={codeRawDep} fill="#e2e8f0" fontSize={18} fontWeight={400}>raw</Txt>{" |> filter($age > 18) |> mutate($z = $x + $y)"}</Txt>
       {/* Line 3 */}
-      <Txt ref={codeRefs[3]} fontSize={15} fill={R_COLOR} fontFamily="monospace" opacity={0} y={10}>{"  "}{"  mod  = rn(command = <{ lm(z ~ age, data = "}<Txt ref={codeTidyDep} fill={R_COLOR} fontSize={15} fontWeight={400}>tidy</Txt>{") }>, serializer = ^pmml)"}</Txt>
+      <Txt ref={codeRefs[3]} fontSize={18} fill={R_COLOR} fontFamily="monospace" opacity={0} y={10}>{"  "}{"  mod  = rn(command = <{ lm(z ~ age, data = "}<Txt ref={codeTidyDep} fill={R_COLOR} fontSize={18} fontWeight={400}>tidy</Txt>{") }>, serializer = ^pmml)"}</Txt>
       {/* Line 4 */}
       <Layout ref={codeRefs[4]} layout direction="row" gap={12} opacity={0} y={10}>
-        <Txt text="  plot = qn(script = &quot;report.qmd&quot;)" fontSize={15} fill={Q_COLOR} fontFamily="monospace" />
-        <Txt ref={quartoComment} text="-- model is referenced in report.qmd" fontSize={15} fill="#60a5fa" fontFamily="monospace" opacity={0} y={10} />
+        <Txt text="  plot = qn(script = &quot;report.qmd&quot;)" fontSize={18} fill={Q_COLOR} fontFamily="monospace" />
+        <Txt ref={quartoComment} text="-- model is referenced in report.qmd" fontSize={18} fill="#60a5fa" fontFamily="monospace" opacity={0} y={10} />
       </Layout>
       {/* Line 5 */}
-      <Txt ref={codeRefs[5]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>{"}"}</Txt>
+      <Txt ref={codeRefs[5]} fontSize={18} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>{"}"}</Txt>
       {/* Line 6 */}
-      <Txt ref={codeRefs[6]} fontSize={15} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>build_pipeline(p)</Txt>
+      <Txt ref={codeRefs[6]} fontSize={18} fill="#c792ea" fontFamily="monospace" opacity={0} y={10}>build_pipeline(p)</Txt>
     </Layout>
   );
 
@@ -99,7 +99,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={replLabel}
       text="In the T REPL call t_make() to actually build the pipeline"
-      fontSize={18}
+      fontSize={22}
       fill="#e2e8f0"
       fontFamily="sans-serif"
       opacity={0}
@@ -119,14 +119,14 @@ export default makeScene2D(function* (view) {
   codeRawName().fontWeight(800);
   codeRawDep().fontWeight(800);
   yield* all(
-    codeRawName().fontSize(22, 0.25, easeOutBack),
+    codeRawName().fontSize(24, 0.25, easeOutBack),
     codeRawName().fill('#22c55e', 0.25),
-    codeRawDep().fontSize(22, 0.25, easeOutBack),
+    codeRawDep().fontSize(24, 0.25, easeOutBack),
     codeRawDep().fill('#22c55e', 0.25),
   );
   yield* all(
-    codeRawName().fontSize(15, 0.25, easeInOutCubic),
-    codeRawDep().fontSize(15, 0.25, easeInOutCubic),
+    codeRawName().fontSize(18, 0.25, easeInOutCubic),
+    codeRawDep().fontSize(18, 0.25, easeInOutCubic),
   );
   yield* waitFor(0.8);
 
@@ -134,14 +134,14 @@ export default makeScene2D(function* (view) {
   codeTidyName().fontWeight(800);
   codeTidyDep().fontWeight(800);
   yield* all(
-    codeTidyName().fontSize(22, 0.25, easeOutBack),
+    codeTidyName().fontSize(24, 0.25, easeOutBack),
     codeTidyName().fill('#ef4444', 0.25),
-    codeTidyDep().fontSize(22, 0.25, easeOutBack),
+    codeTidyDep().fontSize(24, 0.25, easeOutBack),
     codeTidyDep().fill('#ef4444', 0.25),
   );
   yield* all(
-    codeTidyName().fontSize(15, 0.25, easeInOutCubic),
-    codeTidyDep().fontSize(15, 0.25, easeInOutCubic),
+    codeTidyName().fontSize(18, 0.25, easeInOutCubic),
+    codeTidyDep().fontSize(18, 0.25, easeInOutCubic),
   );
   yield* waitFor(0.8);
 
@@ -150,8 +150,8 @@ export default makeScene2D(function* (view) {
     quartoComment().opacity(1, 0.4, easeInOutCubic),
     quartoComment().y(0, 0.4, easeInOutCubic),
   );
-  yield* quartoComment().fontSize(22, 0.25, easeOutBack);
-  yield* quartoComment().fontSize(15, 0.25, easeInOutCubic);
+  yield* quartoComment().fontSize(24, 0.25, easeOutBack);
+  yield* quartoComment().fontSize(18, 0.25, easeInOutCubic);
   yield* waitFor(0.8);
 
   // Now show build_pipeline(p) line

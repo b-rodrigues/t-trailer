@@ -19,7 +19,7 @@ const PY_COLOR = '#FFD43B';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
-  view.scale(1.8);
+  view.scale(3.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -58,7 +58,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={p1Label}
       text="p_etl"
-      fontSize={22}
+      fontSize={26}
       fontWeight={700}
       fill={INDIGO}
       fontFamily="monospace"
@@ -74,7 +74,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={p2Label}
       text="p_stats"
-      fontSize={22}
+      fontSize={26}
       fontWeight={700}
       fill={INDIGO}
       fontFamily="monospace"
@@ -117,7 +117,7 @@ export default makeScene2D(function* (view) {
         <Txt
           ref={p1LabelRefs[i]}
           text={n.name}
-          fontSize={14}
+          fontSize={16}
           fontWeight={700}
           fill="#ffffff"
           fontFamily="monospace"
@@ -179,7 +179,7 @@ export default makeScene2D(function* (view) {
         <Txt
           ref={p2LabelRefs[i]}
           text={n.name}
-          fontSize={14}
+          fontSize={16}
           fontWeight={700}
           fill="#ffffff"
           fontFamily="monospace"
@@ -213,7 +213,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={metaLabel}
       text='meta = pipeline_of { etl = p_etl, stats = p_stats }'
-      fontSize={18}
+      fontSize={22}
       fill={INDIGO}
       fontFamily="monospace"
       opacity={0}
@@ -264,7 +264,7 @@ export default makeScene2D(function* (view) {
         <Txt
           ref={metaLabelRefs[i]}
           text={n.name}
-          fontSize={12}
+          fontSize={14}
           fontWeight={700}
           fill="#ffffff"
           fontFamily="monospace"
@@ -325,7 +325,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={subLabel1}
       text="etl ▸"
-      fontSize={14}
+      fontSize={16}
       fill={SLATE}
       fontFamily="monospace"
       opacity={0}
@@ -339,7 +339,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={subLabel2}
       text="stats ▸"
-      fontSize={14}
+      fontSize={16}
       fill={SLATE}
       fontFamily="monospace"
       opacity={0}
@@ -370,7 +370,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={tagline}
       text="Compose. Merge. Reuse."
-      fontSize={30}
+      fontSize={34}
       fontWeight={700}
       fill="#e2e8f0"
       fontFamily="monospace"
@@ -384,7 +384,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={taglineSub}
       text="Modular pipelines that compose naturally"
-      fontSize={16}
+      fontSize={20}
       fill={SLATE}
       fontFamily="sans-serif"
       opacity={0}

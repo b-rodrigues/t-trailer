@@ -19,7 +19,7 @@ const TEAL_COLOR = '#00f2fe';
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
-  view.scale(1.8);
+  view.scale(3.8);
 
   // ─── Phase 1: Title ────────────────────────────
   const title = createRef<Txt>();
@@ -75,9 +75,9 @@ export default makeScene2D(function* (view) {
       layout
       direction="column"
       alignItems="start"
-      gap={8}
+      gap={12}
       x={-180}
-      y={-60}
+      y={20}
     >
       {lines.map((item, idx) => (
         <Layout layout direction="column" alignItems="start" gap={2} key={`line-${idx}`}>
@@ -86,7 +86,7 @@ export default makeScene2D(function* (view) {
             <Txt
               ref={lineRefs[idx].promptRef}
               text="T>"
-              fontSize={13}
+              fontSize={16}
               fill={PINK_COLOR}
               fontFamily="monospace"
               opacity={0}
@@ -94,7 +94,7 @@ export default makeScene2D(function* (view) {
             <Txt
               ref={lineRefs[idx].cmdRef}
               text={item.cmd}
-              fontSize={13}
+              fontSize={16}
               fill="#e2e8f0"
               fontFamily="monospace"
               fontWeight={700}
@@ -106,11 +106,11 @@ export default makeScene2D(function* (view) {
           <Txt
             ref={lineRefs[idx].outRef}
             text={item.out}
-            fontSize={12}
+            fontSize={15}
             fill={idx === 3 ? TEAL_COLOR : SLATE}
             fontFamily="monospace"
             opacity={0}
-            marginLeft={20}
+            marginLeft={25}
           />
         </Layout>
       ))}

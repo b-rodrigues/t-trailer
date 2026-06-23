@@ -1,5 +1,5 @@
 import { makeScene2D } from '@motion-canvas/2d';
-import { Txt, Rect, Layout, Circle, Line } from '@motion-canvas/2d';
+import { Txt, Rect, Layout, Circle, Line, Img } from '@motion-canvas/2d';
 import {
   createRef,
   all,
@@ -11,6 +11,7 @@ import {
   easeOutBack,
   easeInOutQuad,
 } from '@motion-canvas/core';
+import logoImg from '../../logo.png';
 
 const INDIGO = '#6366f1';
 const SLATE = '#94a3b8';
@@ -34,33 +35,27 @@ function* fadeIn(
 
 export default makeScene2D(function* (view) {
   view.fill(DARK);
-  view.scale(1.8);
+  view.scale(3.8);
 
   // ─── Phase 1: Logo & Tagline ────────────────────────────
-  const logo = createRef<Txt>();
+  const logo = createRef<Img>();
   const tagline = createRef<Txt>();
   const subtitle = createRef<Txt>();
 
   view.add(
     <Layout layout direction="column" alignItems="center" gap={12} width="100%" y={-40}>
-      <Txt
+      <Img
         ref={logo}
-        text="T"
-        fontSize={150}
-        fontWeight={900}
-        fontFamily="monospace"
-        fill={INDIGO}
+        src={logoImg}
+        width={150}
+        height={150}
         opacity={0}
         scale={0.4}
-        shadowColor={INDIGO}
-        shadowBlur={40}
-        shadowOffsetY={0}
-        shadowOffsetX={0}
       />
       <Txt
         ref={tagline}
         text="The Orchestration Engine"
-        fontSize={32}
+        fontSize={38}
         fontWeight={700}
         fill="#e2e8f0"
         fontFamily="sans-serif"
@@ -70,7 +65,7 @@ export default makeScene2D(function* (view) {
       <Txt
         ref={subtitle}
         text="for Polyglot Data Science"
-        fontSize={22}
+        fontSize={26}
         fontWeight={300}
         fill={SLATE}
         fontFamily="sans-serif"
@@ -83,7 +78,6 @@ export default makeScene2D(function* (view) {
   yield* all(
     logo().opacity(1, 1.2, easeInOutCubic),
     logo().scale(1, 1.2, easeOutBack),
-    logo().shadowBlur(60, 1.2, easeInOutCubic),
   );
 
   yield* waitFor(0.4);
@@ -104,8 +98,8 @@ export default makeScene2D(function* (view) {
   // Move title to top
   yield* all(
     logo().y(-240, 0.6, easeInOutCubic),
-    logo().fontSize(60, 0.6, easeInOutCubic),
-    logo().shadowBlur(0, 0.6, easeInOutCubic),
+    logo().width(60, 0.6, easeInOutCubic),
+    logo().height(60, 0.6, easeInOutCubic),
     tagline().opacity(0, 0.4, easeInOutCubic),
     subtitle().opacity(0, 0.4, easeInOutCubic),
   );
@@ -115,7 +109,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={pipelineLabel}
       text="Polyglot Pipeline"
-      fontSize={28}
+      fontSize={34}
       fontWeight={700}
       fill="#e2e8f0"
       fontFamily="monospace"
@@ -161,7 +155,7 @@ export default makeScene2D(function* (view) {
             ref={labelRefs[i]}
             text={lang.name}
             fill="#ffffff"
-            fontSize={24}
+            fontSize={28}
             fontWeight={800}
             fontFamily="monospace"
           />
@@ -171,7 +165,7 @@ export default makeScene2D(function* (view) {
             <Txt
               ref={arrowRefs[i]}
               text="→"
-              fontSize={28}
+              fontSize={34}
               fill={SLATE}
               fontFamily="monospace"
               opacity={0}
@@ -203,7 +197,7 @@ export default makeScene2D(function* (view) {
     <Txt
       ref={catchySummary}
       text="T provides the seamless glue between nodes, making pipeline manipulation effortless."
-      fontSize={18}
+      fontSize={22}
       fill={SLATE}
       fontFamily="sans-serif"
       opacity={0}
@@ -213,50 +207,14 @@ export default makeScene2D(function* (view) {
   yield* catchySummary().opacity(1, 0.6, easeInOutCubic);
   yield* waitFor(2.0);
 
-  // ─── Phase 3: Website ────────────────────────────────────
-  // Fade out pipeline and summary
+  // Fade out pipeline, summary, and logo to end the intro scene
   yield* all(
     pipelineLabel().opacity(0, 0.4),
     ...boxRefs.map(r => r().opacity(0, 0.4)),
     ...arrowRefs.map(r => r().opacity(0, 0.4)),
     catchySummary().opacity(0, 0.4),
+    logo().opacity(0, 0.4),
   );
 
-  const website = createRef<Txt>();
-  const github = createRef<Txt>();
-
-  view.add(
-    <Layout layout direction="column" alignItems="center" gap={8}>
-      <Txt
-        ref={website}
-        text="tstats-project.org"
-        fontSize={36}
-        fontWeight={700}
-        fill={INDIGO}
-        fontFamily="monospace"
-        opacity={0}
-        y={-20}
-      />
-      <Txt
-        ref={github}
-        text="github.com/b-rodrigues/tlang"
-        fontSize={18}
-        fill={SLATE}
-        fontFamily="monospace"
-        opacity={0}
-        y={-20}
-      />
-    </Layout>,
-  );
-
-  yield* all(
-    website().opacity(1, 0.8, easeInOutCubic),
-    website().y(0, 0.8, easeInOutCubic),
-    delay(0.4, all(
-      github().opacity(1, 0.8, easeInOutCubic),
-      github().y(0, 0.8, easeInOutCubic),
-    )),
-  );
-
-  yield* waitFor(2);
+  yield* waitFor(0.5);
 });
